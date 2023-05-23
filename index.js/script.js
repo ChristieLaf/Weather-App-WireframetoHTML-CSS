@@ -1,106 +1,65 @@
-let weather = {
-  paris: {
-    temp: 19.7,
-    humidity: 80,
-  },
-  tokyo: {
-    temp: 17.3,
-    humidity: 50,
-  },
-  lisbon: {
-    temp: 30.2,
-    humidity: 20,
-  },
-  "san francisco": {
-    temp: 20.9,
-    humidity: 100,
-  },
-  oslo: {
-    temp: -5,
-    humidity: 20,
-  },
-};
+function formatDate(date) {
+  let hours = date.getHours();
+  if (hours < 10) {
+    hours = `0${hours}`;
+  }
 
-let city = prompt("Enter your city?");
-city = city.toLowerCase();
-if (weather[city] !== undefined) {
-  let temperature = weather[city].temp;
-  let humidity = weather[city].humidity;
-  let celsiusTemperature = Math.round(temperature);
-  let fahrenheitTemperature = Math.round((temperature * 9) / 5 + 32);
+  let minutes = date.getMinutes();
+  if (minutes < 10) {
+    minutes = `0${minutes}`;
+  }
 
-  alert(
-    `It is currently ${celsiusTemperature} °C (${fahrenheitTemperature} °F) in ${city} with a humidity of ${humidity}%`
-  );
-} else {
-  alert(
-    `Sorry, we don't know the weather for this city, try going to https://www.google.com/search?q=weather+${city}`
-  );
+  let dayIndex = date.getDay();
+  let days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  ];
+  let day = days[dayIndex];
+
+  return `${day} ${hours}:${minutes}`;
 }
 
-let now = new Date();
-
-let h2 = document.querySelector("h2");
-
-let date = now.getDate();
-let hours = now.getHours();
-let minutes = now.getMinutes();
-let year = now.getFullYear();
-
-let days = ["Sun", "Mon", "Tue", "Wed", "Thurs", "Fri", "Sat"];
-let day = days[now.getDay()];
-
-let months = [
-  "Jan",
-  "Feb",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-let month = months[now.getMonth()];
-
-h2.innerHTML = `${day} ${month} ${date}, ${hours}:${minutes}, ${year}`;
+function displayWeatherCondition(response) {
+  console.log(response.data);
+}
 
 function search(event) {
   event.preventDefault();
-  let searchInput = document.querySelector("#search-text-input");
+  let city = document.querySelector("#city-input").value;
+  let apiKey = "66d6ff1238907f6dafb724d6e10a9b10";
+  let apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial';
+axios.get(apiUrl).then(displayWeatherCondition);
 
-  function convertToCelsius(event) {
-    event.preventDefault();
-    let temperatureElement = document.querySelector("#temperature");
-    let temperature = temperatureElement.innerHTML;
-    temperature = Number(temperature);
-    temperatureElement.innerHTML = Math.round(temperature - 32 * (5 / 9));
-  }
 
-  function convertToFahrenheit(event) {
-    event.preventDefault();
-    let temperatureElement = document.querySelector("#temperature");
-    let temperature = temperatureElement.innerHTML;
-    temperature = Number(temperature);
-    temperatureElement.innerHTML = Math.round(temperature - 32 * (5 / 9));
-  }
-
-  let h1 = document.querySelector("h2");
-  if (searchInput.value) {
-    h2.innerHTML = `Searching for ${searchInput.value}...`;
-  } else {
-    h1.innerHTML = null;
-    alert("Please type a city");
-  }
+function convertToCelsius(event) {
+  event.preventDefault();
+  let temperatureElement = document.querySelector("#temperature");
+  temperatureElement.innerHTML = 10.5;
 }
-let form = document.querySelector("#search-form");
-form.addEventListener("submit", search);
 
-let celsiuslink = document.querySelector("#celsius-link");
-celsiuslink.addEventListener("click", convertToCelsius);
+function convertToFahrenheit(event) {
+  event.preventDefault();
+  let temperatureElement = document.querySelector("#temperature");
+  temperatureElement.innerHTML = 51;
+}
 
-let fahrenheitlink = document.querySelector("#celsius-link");
-fahrenheitlink.addEventListener("click", convertToFahrenheit);
+// Feature #1-Week 4
+let dateElement = document.querySelector("#date");
+let currentTime = new Date();
+dateElement.innerHTML = formatDate(currentTime);
+
+// Feature # 2-Week 4
+let searchForm = document.querySelector("#search-form");
+searchForm.addEventListener("submit", search);
+
+// Bonus Feature-Week 4
+let celsiusLink = document.querySelector("#celsius-link");
+celsiusLink.addEventListener("click", convertToCelsius);
+
+let fahrenheitLink = document.querySelector("#fahrenheit-link");
+fahrenheitLink.addEventListener("click", convertToFahrenheit);
